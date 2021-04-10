@@ -43,4 +43,4 @@ PSG9080_ARB.exe COM3 -write16 1 wave01.txt
 
 ### Remarks
 
-The source code also includes the code for the firmware update command, but this command is disabled in the source code and you will be unable to use it by default, because I never tested it on the real device. It was tested on simulator and I don't know if it works on the real device. Do not use this command because upgrage command may fails and you can brick your device. 
+The source code also includes the code for the firmware upgrade command, but this command is disabled in the source code and you will be unable to use it by default, because I never tested it on the real device. It was tested on simulator and I don't know if it works on the real device. Do not use this command because upgrage command may fails and you can brick your device. 
