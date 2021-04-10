@@ -17,9 +17,12 @@ PSG9080_ARB.exe COM3 -read 1 wave01.txt
 PSG9080_ARB.exe COM3 -write 1 wave01.txt
 
 where:
+
 COM3 - usb/serial port of PSG9080 signal generator
+
 1 - arbitrary wave number
-wave01.txt - filename to save downloaded arbitrary wave
+
+wave01.txt - text filename to save or load arbitrary wave (it should consists of 8192 lines with decimal values)
 
 
 ### Note
