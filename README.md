@@ -18,7 +18,7 @@ PSG9080_ARB.exe COM3 -write 1 wave01.txt
 
 where:
 
-COM3 - usb/serial port of PSG9080 signal generator
+COM3 - usb/serial port of PSG9080 signal generator (you can find it on the system Device Manager under "Ports (COM and LPT) entry")
 
 1 - arbitrary wave number
 
