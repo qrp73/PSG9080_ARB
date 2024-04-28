@@ -41,10 +41,10 @@ In order to run the tool on Linux OS, you're needs to install mono. Then you can
 
 For example:
 ```
-mono PSG9080_ARB.exe COM3 -read 1 wave01.txt
+mono PSG9080_ARB.exe /dev/ttyUSB2 -read 1 wave01.txt
 ```
 ```
-mono PSG9080_ARB.exe COM3 -write 1 wave01.txt
+mono PSG9080_ARB.exe /dev/ttyUSB2 -write 1 wave01.txt
 ```
 
 
