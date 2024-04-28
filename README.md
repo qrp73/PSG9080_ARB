@@ -4,7 +4,9 @@ Arbitrary wave download/upload command line utility for PSG9080 signal generator
 ![PSG9080](https://github.com/qrp73/PSG9080_ARB/assets/46676744/a4469419-fb0c-42e6-ac15-44c7114c8b17)
 
 
+## Install
 
+Installation and configuration is not required, just unzip archive and run it.
 
 ## Usage
 
@@ -27,6 +29,19 @@ COM3 - usb/serial port of PSG9080 signal generator (you can find it on the syste
 1 - arbitrary wave number
 
 wave01.txt - text filename to save or load arbitrary wave (it should consists of 8192 lines with decimal values)
+
+
+# How to run on Linux
+
+In order to run the tool on Linux OS, you're needs to install mono. Then you can run the tool the same as on Windows, just att "mono" before command. 
+
+For example:
+```
+mono PSG9080_ARB.exe COM3 -read 1 wave01.txt
+```
+```
+mono PSG9080_ARB.exe COM3 -write 1 wave01.txt
+```
 
 
 ### Note
