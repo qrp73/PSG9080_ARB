@@ -16,11 +16,15 @@ Installation and configuration is not required, just unzip archive and run it.
 
 ### Download arbitrary wave number 1 from a PSG9080 to the file:
 
+```
 PSG9080_ARB.exe COM3 -read 1 wave01.txt
+```
 
 ### Upload arbitrary wave number 1 from a file to the PSG9080:
 
+```
 PSG9080_ARB.exe COM3 -write 1 wave01.txt
+```
 
 where:
 
@@ -54,11 +58,15 @@ In order to support arbitrary wave files from original software I added two addi
 
 ### Download arbitrary wave number 1 from a PSG9080 to the file in 16-bit format:
 
+```
 PSG9080_ARB.exe COM3 -read16 1 wave01.txt
+```
 
 ### Upload arbitrary wave number 1 from a file in 16-bit format to the PSG9080:
 
+```
 PSG9080_ARB.exe COM3 -write16 1 wave01.txt
+```
 
 ### Remarks
 
