@@ -1,6 +1,10 @@
 # PSG9080_ARB
 Arbitrary wave download/upload command line utility for PSG9080 signal generator
 
+![PSG9080](https://github.com/qrp73/PSG9080_ARB/assets/46676744/a4469419-fb0c-42e6-ac15-44c7114c8b17)
+
+
+
 
 ## Usage
 
