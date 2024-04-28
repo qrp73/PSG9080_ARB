@@ -37,7 +37,7 @@ wave01.txt - text filename to save or load arbitrary wave (it should consists of
 
 # How to run on Linux
 
-In order to run the tool on Linux OS, you're needs to install mono. Then you can run the tool the same as on Windows, just att "mono" before command. 
+In order to run the tool on Linux OS, you're needs to install mono. Then you can run the tool the same as on Windows, just add "mono" before command. 
 
 For example:
 ```
