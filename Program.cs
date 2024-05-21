@@ -24,6 +24,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -59,8 +60,8 @@ namespace PSG9080_ARB
                         {
                             using (var psg = new PSG9080(portName))
                             {
-                                Ping(psg);
-                                var arbwave = ReadARB(psg, number);
+                                var model = Ping(psg);
+                                var arbwave = ReadARB(psg, number, model);
                                 SaveFile(fileName, arbwave, false);
                             }
                         }
@@ -68,19 +69,19 @@ namespace PSG9080_ARB
                         {
                             using (var psg = new PSG9080(portName))
                             {
-                                Ping(psg);
+                                var model = Ping(psg);
                                 var arbwave = ParseFile(fileName, false);
                                 if (arbwave == null)
                                     return;
-                                WriteARB(psg, number, arbwave);
+                                WriteARB(psg, number, arbwave, model);
                             }
                         }
                         else if (args[1].ToLowerInvariant() == "-read16")
                         {
                             using (var psg = new PSG9080(portName))
                             {
-                                Ping(psg);
-                                var arbwave = ReadARB(psg, number);
+                                var model = Ping(psg);
+                                var arbwave = ReadARB(psg, number, model);
                                 SaveFile(fileName, arbwave, true);
                             }
                         }
@@ -88,12 +89,12 @@ namespace PSG9080_ARB
                         {
                             using (var psg = new PSG9080(portName))
                             {
-                                Ping(psg);
+                                var model = Ping(psg);
                                 var arbwave = ParseFile(fileName, true);
                                 if (arbwave == null)
                                     return;
                                 //File.WriteAllLines("sine-save-14.txt", arbwave.Select(arg=>string.Format("{0}", arg)).ToArray());
-                                WriteARB(psg, number, arbwave);
+                                WriteARB(psg, number, arbwave, model);
                             }
                         }
                         else
@@ -163,27 +164,38 @@ namespace PSG9080_ARB
             }
         }
 
-        static void Ping(PSG9080 psg)
+        static string Ping(PSG9080 psg)
         {
             var items = psg.GetAll();
             Console.WriteLine("Model: PSG90{0}", items["00"]);
             Console.WriteLine("S/N:   {0}", items["01"]);
-            var version = items["02"].Split(',');
-            var major = version
-                .Select(arg => arg.Substring(0, arg.Length - 2))
-                .Select(arg => int.Parse(arg))
-                .ToArray();
-            var minor = version
-                .Select(arg => arg.Substring(arg.Length - 2))
-                .Select(arg => int.Parse(arg))
-                .ToArray();
-            Console.WriteLine("Hardware: v{0}.{1:D02}", major[0], minor[0]);
-            Console.WriteLine("Firmware: v{0}.{1:D02}", major[1], minor[1]);
-            Console.WriteLine("FPGA:     v{0}.{1:D02}", major[2], minor[2]);
-            Console.WriteLine();
+            if (items["00"] == "80")
+            {
+                // PSG9080
+                var version = items["02"].Split(',');
+                var major = version
+                    .Select(arg => arg.Substring(0, arg.Length - 2))
+                    .Select(arg => int.Parse(arg))
+                    .ToArray();
+                var minor = version
+                    .Select(arg => arg.Substring(arg.Length - 2))
+                    .Select(arg => int.Parse(arg))
+                    .ToArray();
+                Console.WriteLine("Hardware: v{0}.{1:D02}", major[0], minor[0]);
+                Console.WriteLine("Firmware: v{0}.{1:D02}", major[1], minor[1]);
+                Console.WriteLine("FPGA:     v{0}.{1:D02}", major[2], minor[2]);
+                Console.WriteLine();
+            }
+            else
+            {
+                // JDS2800
+                Console.WriteLine("Firmware: {0}", items["02"]);
+                Console.WriteLine();
+            }
+            return items["00"];
         }
 
-        private static ushort[] ReadARB(PSG9080 psg, int number)
+        private static ushort[] ReadARB(PSG9080 psg, int number, string model)
         {
             if (number < 1 || number > 15)
                 throw new ArgumentOutOfRangeException("number");
@@ -195,7 +207,7 @@ namespace PSG9080_ARB
                 Console.WriteLine("ERROR: w24: {0}", text);
                 return null;
             }
-            
+
             // ???
             //text = psg.Execute(":w23=0,13592481.");
             //if (text != ":ok")
@@ -203,17 +215,21 @@ namespace PSG9080_ARB
             //    Console.WriteLine("ERROR: w23: {0}", text);
             //    return;
             //}
-            
+
+            var sampleCount = model == "60" ? 2048 : 8192;
+
             // read arb wave
             // ":B01=0."
             var arbId = string.Format(":B{0:D02}", number);
+            if (model == "60")
+                arbId = string.Format(":b{0:D02}", number);
             var arbRq = string.Format("{0}=0.", arbId);
             psg.WriteLine(arbRq);
             ProgressUpdate(-1);
-            text = psg.ReadLineCallback((byte)',', 8192, ProgressUpdate);
+            text = psg.ReadLineCallback((byte)',', sampleCount, ProgressUpdate);
             ProgressDone();
 
-            if (!text.StartsWith(arbId))
+            if (!text.StartsWith(arbId, StringComparison.InvariantCulture))
             {
                 Console.WriteLine("ERROR: {0}: {1}", arbId, text);
                 return null;
@@ -228,13 +244,14 @@ namespace PSG9080_ARB
             return arbwave;
         }
 
-        private static void WriteARB(PSG9080 psg, int number, ushort[] arbwave)
+        private static void WriteARB(PSG9080 psg, int number, ushort[] arbwave, string model)
         {
             if (number < 1 || number > 15)
                 throw new ArgumentOutOfRangeException("number");
-            if (arbwave.Length != 8192)
+            var sampleCount = model == "60" ? 2048 : 8192;
+            if (arbwave.Length != sampleCount)
             {
-                Console.WriteLine("ERROR: sample count is not 8192");
+                Console.WriteLine("ERROR: sample count is not {0}", sampleCount);
                 return;
             }
 
@@ -257,6 +274,8 @@ namespace PSG9080_ARB
             // write arb wave
             // ":A01=...,"
             var arbId = string.Format(":A{0:D02}", number);
+            if (model == "60")
+                arbId = string.Format(":a{0:D02}", number);
             psg.Write(arbId + "=");
             ProgressUpdate(-1);
             for (var i = 0; i < arbwave.Length; i++)
