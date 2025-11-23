@@ -34,6 +34,32 @@ COM3 - usb/serial port of PSG9080 signal generator (you can find it on the syste
 
 wave01.txt - text filename to save or load arbitrary wave (it should consists of 8192 lines with decimal values)
 
+# Build and run on Linux or macOS
+
+```
+$ sudo apt install mono-runtime mono-mcs
+
+$ git clone https://github.com/qrp73/PSG9080_ARB.git
+
+$ cd PSG9080_ARB/
+
+$ mkdir build && cd build
+
+$ mcs -out:PSG9080_ARB.exe ../AssemblyInfo.cs ../Program.cs ../PSG9080.cs
+
+$ mono PSG9080_ARB.exe /dev/ttyUSB0 -read 1 wave01.txt
+Model: PSG9080
+S/N:   2090800***
+Hardware: v1.20
+Firmware: v1.20
+FPGA:     v1.20
+
+8192 samples downloaded   
+8192 samples written into the file
+
+$ ls
+PSG9080_ARB.exe  wave01.txt
+```
 
 # How to run on Linux
 
@@ -47,6 +73,25 @@ mono PSG9080_ARB.exe /dev/ttyUSB2 -read 1 wave01.txt
 mono PSG9080_ARB.exe /dev/ttyUSB2 -write 1 wave01.txt
 ```
 
+For convenience, you can place a small bash script named ```psg9080_arb``` next to ```PSG9080_ARB.exe```:
+```
+#!/usr/bin/env bash
+
+mono "$(dirname ${BASH_SOURCE[0]:-$0})"/PSG9080_ARB.exe "$@"
+```
+
+assign execute permission with ```sudo chmod +x psg9080_arb``` and then run it in the following way:
+```
+$ ./psg9080_arb /dev/ttyUSB0 -read 1 wave01.txt
+Model: PSG9080
+S/N:   2090800***
+Hardware: v1.20
+Firmware: v1.20
+FPGA:     v1.20
+
+8192 samples downloaded    
+8192 samples written into the file
+```
 
 ### Note
 
