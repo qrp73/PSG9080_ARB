@@ -130,7 +130,8 @@ namespace PSG9080_ARB
                 else
                 {
                     Console.WriteLine("PSG9080 arbitrary wave read/write utility");
-                    Console.WriteLine("(c)2021 qrp73 v1.0");
+                    Console.WriteLine("(c)2021 qrp73 v1.01");
+                    Console.WriteLine("https://github.com/qrp73/PSG9080_ARB");
                     Console.WriteLine();
                     Console.WriteLine("PSG9080_ARB.exe <serial port>");
                     Console.WriteLine("    Test PSG9080 connection");

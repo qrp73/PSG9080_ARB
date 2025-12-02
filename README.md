@@ -34,20 +34,23 @@ COM3 - usb/serial port of PSG9080 signal generator (you can find it on the syste
 
 wave01.txt - text filename to save or load arbitrary wave (it should consists of 8192 lines with decimal values)
 
+
 # Build and run on Linux or macOS
 
 ```
 $ sudo apt install mono-runtime mono-mcs
-
 $ git clone https://github.com/qrp73/PSG9080_ARB.git
-
-$ cd PSG9080_ARB/
-
+$ cd PSG9080_ARB
 $ mkdir build && cd build
+$ cmake ..
+$ make
+$ sudo make install
+```
 
-$ mcs -out:PSG9080_ARB.exe ../AssemblyInfo.cs ../Program.cs ../PSG9080.cs
 
-$ mono PSG9080_ARB.exe /dev/ttyUSB0 -read 1 wave01.txt
+Test read waveform 01:
+```
+$ psg9080_arb /dev/ttyUSB0 -read 1 wave01.txt
 Model: PSG9080
 S/N:   2090800***
 Hardware: v1.20
@@ -61,37 +64,7 @@ $ ls
 PSG9080_ARB.exe  wave01.txt
 ```
 
-# How to run on Linux
 
-In order to run the tool on Linux OS, you're needs to install mono. Then you can run the tool the same as on Windows, just add "mono" before command. 
-
-For example:
-```
-mono PSG9080_ARB.exe /dev/ttyUSB2 -read 1 wave01.txt
-```
-```
-mono PSG9080_ARB.exe /dev/ttyUSB2 -write 1 wave01.txt
-```
-
-For convenience, you can place a small bash script named ```psg9080_arb``` next to ```PSG9080_ARB.exe```:
-```
-#!/usr/bin/env bash
-
-mono "$(dirname ${BASH_SOURCE[0]:-$0})"/PSG9080_ARB.exe "$@"
-```
-
-assign execute permission with ```sudo chmod +x psg9080_arb``` and then run it in the following way:
-```
-$ ./psg9080_arb /dev/ttyUSB0 -read 1 wave01.txt
-Model: PSG9080
-S/N:   2090800***
-Hardware: v1.20
-Firmware: v1.20
-FPGA:     v1.20
-
-8192 samples downloaded    
-8192 samples written into the file
-```
 
 ### Note
 
@@ -101,17 +74,20 @@ Original software use a little different format. It strore values in 16 bit inte
 
 In order to support arbitrary wave files from original software I added two additional commands: read16 and write16.
 
+
 ### Download arbitrary wave number 1 from a PSG9080 to the file in 16-bit format:
 
 ```
 PSG9080_ARB.exe COM3 -read16 1 wave01.txt
 ```
 
+
 ### Upload arbitrary wave number 1 from a file in 16-bit format to the PSG9080:
 
 ```
 PSG9080_ARB.exe COM3 -write16 1 wave01.txt
 ```
+
 
 ### Remarks
 
